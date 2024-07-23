@@ -1,0 +1,95 @@
+import React from 'react'
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    TextField,
+} from '@mui/material'
+import { LoadingButton } from '@mui/lab'
+import SaveIcon from '@mui/icons-material/Save'
+import CloseIcon from '@mui/icons-material/Close'
+import { useForm, usePage } from '@inertiajs/inertia-react'
+import ImageSelector from '@/Components/ImageSelector'
+
+const {{ModelClassName}}Form = ({ translate, onClose, {{modal_small_name}} }) => {
+    const { lang } = usePage().props
+
+    const handleClose = () => {
+        onClose()
+    }
+
+    const { post, processing, setData, data, errors, put } = useForm({{{model_form_field}}
+    })
+
+    const handleChange = event => {
+        setData(event.target.name, event.target.value)
+    }
+
+    const handleSubmit = event => {
+        event.preventDefault()
+        if (!{{modal_small_name}}) {
+            post(route('{{modal_small_name}}.store', { lang }), {
+                onSuccess: () => {
+                    handleClose()
+                },
+            })
+        } else {
+            post(
+                route('{{modal_small_name}}.update', {
+                    lang,
+                    {{modal_small_name}}: {{modal_small_name}}.id,
+                    _method: 'PUT',
+                }),
+                {
+                    onSuccess: () => {
+                        handleClose()
+                    },
+                },
+            )
+        }
+    }
+
+    return (
+        <Dialog open={true} maxWidth={'sm'} fullWidth={true}>
+            <DialogTitle>
+                {{{modal_small_name}}
+                    ? translate('Edit {{modal_small_name}}')
+                    : translate('Create {{modal_small_name}}')}
+            </DialogTitle>
+            <form onSubmit={handleSubmit}>
+                <DialogContent>
+                    <DialogContentText className={'grid grid-cols-1 gap-3'}>
+                        {/*<ImageSelector
+                            selectedImage={{{modal_small_name}} ? {{modal_small_name}}.image : null}
+                            onSelect={image => setData('image', image)}
+                            label={translate('{{ModelClassName}} image')}
+                        />*/}{{model_form_inputs}}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <LoadingButton
+                        color={'success'}
+                        type={'submit'}
+                        variant={'outlined'}
+                        loading={processing}
+                        endIcon={<SaveIcon />}>
+                        {translate('Save')}
+                    </LoadingButton>
+                    <Button
+                        type={'button'}
+                        endIcon={<CloseIcon />}
+                        color={'error'}
+                        onClick={handleClose}
+                        variant={'outlined'}>
+                        {translate('Close')}
+                    </Button>
+                </DialogActions>
+            </form>
+        </Dialog>
+    )
+}
+
+export default {{ModelClassName}}Form

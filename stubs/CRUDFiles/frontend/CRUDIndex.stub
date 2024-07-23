@@ -1,0 +1,56 @@
+import React from 'react'
+import Authenticated from '@/Layouts/AuthenticatedLayout'
+import useLanguage from '@/hooks/useLanguage'
+import { Button } from '@mui/material'
+import { PlusIcon } from '@heroicons/react/24/solid'
+import Datatable from '@/Components/Datatable/Datatable'
+import ProtectedComponent from '@/Components/ProtectedComponent'
+import {{ModelClassName}}Form from '@/Pages/{{ModelClassName}}/{{ModelClassName}}Form'
+
+const {{ModelClassName}}Index = ({ {{modal_small_name}}s }) => {
+    const [showForm, setShowForm] = React.useState(false)
+    const [{{modal_small_name}}, set{{ModelClassName}}] = React.useState(false)
+    const { translate } = useLanguage()
+
+    return (
+        <Authenticated active={'{{modal_small_name}}'} title={translate('{{ModelClassName}}s')}>
+            <div className={'flex items-center justify-between'}>
+                <h2 className={'text-xl'}>{translate('List of {{modal_small_name}}s')}</h2>
+                <ProtectedComponent role={'{{modal_small_name}}-create-{{modal_small_name}}'}>
+                    <Button
+                        onClick={() => setShowForm(true)}
+                        variant={'outlined'}
+                        endIcon={<PlusIcon className={'h-4'} />}>
+                        {translate('Add new record')}
+                    </Button>
+                </ProtectedComponent>
+            </div>
+            <div className={'mt-8'}>
+                <Datatable
+                    editRole={'{{modal_small_name}}-edit-{{modal_small_name}}'}
+                    deleteRole={'{{modal_small_name}}-delete-project'}
+                    fromResource={true}
+                    data={{{modal_small_name}}s}
+                    handleEditAction={{{modal_small_name}} => {
+                        set{{ModelClassName}}({{modal_small_name}})
+                        setShowForm(true)
+                    }}
+                    columns={[{{model_fields}}
+                    ]}
+                />
+            </div>
+            {showForm && (
+                <{{ModelClassName}}Form
+                    translate={translate}
+                    onClose={() => {
+                        set{{ModelClassName}}(null)
+                        setShowForm(false)
+                    }}
+                    {{modal_small_name}}={{{modal_small_name}}}
+                />
+            )}
+        </Authenticated>
+    )
+}
+
+export default {{ModelClassName}}Index

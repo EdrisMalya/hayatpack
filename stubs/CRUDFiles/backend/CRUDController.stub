@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Helpers\DatatableBuilder;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\{{ModelClassName}}Request;
+use App\Http\Resources\{{ModelClassName}}Resource;
+use App\Models\{{ModelClassName}};
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
+
+class {{ModelClassName}}Controller extends Controller
+{
+    public function index($lang, Request $request){
+        $this->allowed('{{modal_small_name}}-access');
+        ${{modal_small_name}}s = {{ModelClassName}}::query();
+        $datatable = new DatatableBuilder(${{modal_small_name}}s, $request, [{{search_array}}]);
+        return Inertia::render('{{ModelClassName}}/{{ModelClassName}}Index',[
+            '{{modal_small_name}}s' => {{ModelClassName}}Resource::collection($datatable->build())
+        ]);
+    }
+
+    public function store($lang, {{ModelClassName}}Request $request ){
+        $this->allowed('{{modal_small_name}}-create-{{modal_small_name}}');
+        $data = $request->validated();
+        # $data['image'] = asset('storage/'.$request->file('image')->store('{{modal_small_name}}_images','public'));
+        {{ModelClassName}}::query()->create($data);
+        return back()->with(['message' => translate('Saved successfully'), 'type' => 'success']);
+    }
+    public function update($lang, {{ModelClassName}}Request $request, ${{modal_small_name}}){
+        $this->allowed('{{modal_small_name}}-edit-{{modal_small_name}}');
+        try {
+            ${{modal_small_name}} = {{ModelClassName}}::query()->findOrFail(decrypt(${{modal_small_name}}));
+            $data = $request->validated();
+            /*if($request->file('image')){
+                HelperController::removeFile(${{modal_small_name}}->image, 'url');
+                $data['image'] = asset('storage/'.$request->file('image')->store('{{modal_small_name}}_images','public'));
+            }else{
+                $data['image'] = ${{modal_small_name}}->image;
+            }*/
+            ${{modal_small_name}}->update($data);
+            return back()->with(['message' => translate('Updated successfully'), 'type' => 'success']);
+        }
+        catch (\Exception $exception){
+            Log::info($exception);
+            abort(404);
+        }
+    }
+
+    public function destroy($lang, Request $request, ${{modal_small_name}}){
+        $this->allowed('{{modal_small_name}}-delete-{{modal_small_name}}');
+        try {
+            ${{modal_small_name}} = {{ModelClassName}}::query()->findOrFail(decrypt(${{modal_small_name}}));
+            /*if(${{modal_small_name}}->image){
+                HelperController::removeFile(${{modal_small_name}}->image, 'url');
+            }*/
+            ${{modal_small_name}}->delete();
+            return back()->with(['message' => translate('Deleted successfully'), 'type' => 'success']);
+        }
+        catch (\Exception $exception){
+            Log::error($exception);
+            abort(404);
+        }
+    }
+
+}
