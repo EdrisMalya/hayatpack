@@ -52,7 +52,7 @@ class PatientsController extends Controller
             "take_item_person",
             "due_amount",
         ];
-        $query = Patient::query()->where('status', true)->with(['bed', 'attachments']);
+        $query = Patient::query()->with(['bed', 'attachments']);
         if($request->get('from_date') && $request->get('to_date')) {
             $query = $query->whereBetween('created_at', [$request->get('from_date'), $request->get('to_date')]);
         }
@@ -74,6 +74,11 @@ class PatientsController extends Controller
         if($request->has('exited') && $request->get('exited')){
             $query = $query->where('exited', true);
         }
+        if($request->has('status') && $request->get('status')){
+            $query = $query->where('status', 0);
+        }else{
+            $query = $query->where('status', true);
+        }
         $datatable = new DatatableBuilder($query, $request, $search_params);
 
         return Inertia::render('Patients/PatientsIndex', [
@@ -87,6 +92,7 @@ class PatientsController extends Controller
                 'martial_status' => \request()->get('martial_status'),
                 'show_due' => \request()->get('show_due'),
                 'exited' => \request()->get('exited'),
+                'status' => (boolean)\request()->get('status'),
             ],
             'beds' => Bed::all(),
             'periods' => Period::all(),

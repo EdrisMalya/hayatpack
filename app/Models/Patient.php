@@ -14,7 +14,7 @@ class Patient extends Model
 
     protected $guarded = [];
     protected $casts = [
-        'status' => 'boolean'
+        'status' => 'boolean',
     ];
 
     public function getActivitylogOptions(): LogOptions

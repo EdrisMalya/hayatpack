@@ -29,9 +29,11 @@ const PatientFilterModel = ({ open, onClose }) => {
         martial_status: filters?.martial_status
             ? filters?.martial_status
             : null,
+        status: filters?.status
+            ? filters?.status
+            : null,
     })
 
-    console.log(filters)
     const handleChange = event => {
         setData(event.target.name, event.target.value)
     }
@@ -39,7 +41,6 @@ const PatientFilterModel = ({ open, onClose }) => {
     const handleSubmit = event => {
         event.preventDefault()
         Inertia.get(route(route().current(), { lang, ...data }))
-        console.log()
         // Inertia.get()
     }
     const handleReset = () => {
@@ -154,6 +155,20 @@ const PatientFilterModel = ({ open, onClose }) => {
                                     />
                                 }
                                 label={'مرخص شده ها'}
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={data.status}
+                                        onChange={event =>
+                                            setData(
+                                                'status',
+                                                event.target.checked,
+                                            )
+                                        }
+                                    />
+                                }
+                                label={'حذف شده'}
                             />
                         </div>
                     </DialogContentText>
